@@ -7,7 +7,7 @@
 	],
 	"settings": {
 		"terminal.integrated.env.osx": {
-			"PATH": "/Users/viegas/.platformio/penv/bin:/Users/viegas/.platformio/penv:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+			"PATH": "/Users/viegas/.platformio/penv/bin:/Users/viegas/.platformio/penv:/Users/viegas/miniconda/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/Library/Apple/bin",
 			"PLATFORMIO_CALLER": "vscode"
 		},
 		"files.associations": {

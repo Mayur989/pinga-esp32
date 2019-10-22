@@ -5,9 +5,10 @@
  * Descrição:
  * Hardware: Placa ESP32.
  */
-#include "Bluetooth.hpp"
+#include "BluetoothManager.h"
 
-const std::string BluetoothManager::delimiter = "_!_";
+const std::string BluetoothManager::keyDelimiter = "=";
+const std::string BluetoothManager::valueDelimiter = "_!_";
 bool BluetoothManager::connected = false;
 BLEServer *BluetoothManager::pServer = NULL;
 BLEService *BluetoothManager::pService = NULL;
@@ -16,6 +17,9 @@ BLECharacteristic *BluetoothManager::pCharacteristic = NULL;
 
 void PingaBLECallbacks::onConnect(BLEServer* pServer) {
   Serial.println("Conectado");
+
+  Serial.println(WiFiManager::listNetworks().c_str());
+
   BluetoothManager::connected = true;
 };
 void PingaBLECallbacks::onDisconnect(BLEServer* pServer) {
@@ -34,15 +38,34 @@ void printStringToSerial(std::string value) {
 
 void PingaBLECharacteristicCallbacks::onWrite(BLECharacteristic *pCharacteristic) {
   std::string rxValue = pCharacteristic->getValue();
+  if (rxValue.length() <= 0) return;
 
-  if (rxValue.length() > 0) {
-    std::string ssid = rxValue.substr(0, rxValue.find(BluetoothManager::delimiter));
-    std::string password = rxValue.substr(rxValue.find(BluetoothManager::delimiter) + BluetoothManager::delimiter.length(), rxValue.length());
+  std::string operation = rxValue.substr(0, 3);
+  std::string value = (rxValue.length() >= 4) ? rxValue.substr(4, rxValue.length()) : "";
+
+  Serial.println(operation.c_str());
+  Serial.println(value.c_str());
+
+  if (operation.compare("WCR") == 0) {
+    std::string ssid = value.substr(0, value.find(BluetoothManager::valueDelimiter));
+    std::string password = value.substr(value.find(BluetoothManager::valueDelimiter) + BluetoothManager::valueDelimiter.length(), value.length());
 
     printStringToSerial(ssid);
     printStringToSerial(password);
 
-    std::string returnValue = "WCR=" + (WiFiManager::begin(ssid, password)) ? "true" : "false";
+    std::string returnValue = (WiFiManager::begin(ssid, password)) ? "WCR=true" : "WCR=false";
+    BluetoothManager::notifyData(returnValue);
+
+    // Configura o Google IOT
+    IOTManager::setup();
+    IOTManager::connect();
+  } else if (operation.compare("WTC") == 0) {
+    std::string returnValue = (WiFiManager::testConnection()) ? "WTC=true" : "WTC=false";
+    BluetoothManager::notifyData(returnValue);
+  } else if (operation.compare("WNL") == 0) {
+    std::string networks = WiFiManager::listNetworks();
+    std::string returnValue = "WNL=" + networks;
+    Serial.println(returnValue.c_str());
     BluetoothManager::notifyData(returnValue);
   }
 }

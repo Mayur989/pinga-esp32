@@ -6,7 +6,7 @@
  * Hardware: Placa ESP32.
  */
 
-#include <Bluetooth.hpp>
+#include <BluetoothManager.h>
 
 #define LED 2
 int delayTime = 150;

@@ -1,3 +1,6 @@
+#ifndef __BLUETOOTHMANAGER_H__
+#define __BLUETOOTHMANAGER_H__
+
 /**
  * Gustavo Viegas (3026)
  *
@@ -6,7 +9,8 @@
  * Hardware: Placa ESP32.
  */
 #include <sstream>
-#include <WiFiManager.hpp>
+#include "WiFiManager.h"
+#include "IOTManager.h"
 #include <Arduino.h>
 #include <BLEDevice.h>
 #include <BLEUtils.h>
@@ -30,7 +34,8 @@ class PingaBLECharacteristicCallbacks: public BLECharacteristicCallbacks {
 
 class BluetoothManager {
   public:
-    static const std::string delimiter;
+    static const std::string keyDelimiter;
+    static const std::string valueDelimiter;
     
     static bool connected;
     static BLEServer *pServer;
@@ -43,3 +48,5 @@ class BluetoothManager {
     static void notifyDeviceStatus();
     static void notifyData(std::string data);
 };
+
+#endif //__BLUETOOTHMANAGER_H__
