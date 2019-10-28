@@ -1,10 +1,14 @@
 #ifndef __WIFIMANAGER_H__
 #define __WIFIMANAGER_H__
 
-#include "WiFi.h"
-#include "WiFiClientSecure.h"
+#include <WiFi.h>
+#include <WiFiClientSecure.h>
 // #include "HTTPClient.h"
+
+#include "WiFiCredentials.h"
 #include "IOTManager.h"
+#include "FlashManager.h"
+
 #include <sstream>
 
 class WiFiManager {
@@ -19,7 +23,8 @@ class WiFiManager {
     static std::string testConnectionCertificate;
     
     // Methods
-    static bool begin(std::string ssid, std::string password);
+    static void init();
+    static bool begin(WiFiCredentials credentials);
     static std::string getStatus();
     static std::string listNetworks();
     static bool testConnection();

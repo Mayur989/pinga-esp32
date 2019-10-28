@@ -50,15 +50,18 @@ void PingaBLECharacteristicCallbacks::onWrite(BLECharacteristic *pCharacteristic
     std::string ssid = value.substr(0, value.find(BluetoothManager::valueDelimiter));
     std::string password = value.substr(value.find(BluetoothManager::valueDelimiter) + BluetoothManager::valueDelimiter.length(), value.length());
 
-    printStringToSerial(ssid);
-    printStringToSerial(password);
+    WiFiCredentials credentials;
+    credentials.ssid = ssid;
+    credentials.password = password;
+    bool connection = WiFiManager::begin(credentials);
 
-    std::string returnValue = (WiFiManager::begin(ssid, password)) ? "WCR=true" : "WCR=false";
+    if (connection) FlashManager::saveWiFiCredentials(credentials);
+
+    std::string returnValue = (connection) ? "WCR=true" : "WCR=false";
     BluetoothManager::notifyData(returnValue);
 
     // Configura o Google IOT
-    IOTManager::setup();
-    IOTManager::connect();
+    if (connection) IOTManager::setup();
   } else if (operation.compare("WTC") == 0) {
     std::string returnValue = (WiFiManager::testConnection()) ? "WTC=true" : "WTC=false";
     BluetoothManager::notifyData(returnValue);
@@ -74,8 +77,6 @@ void PingaBLECharacteristicCallbacks::onWrite(BLECharacteristic *pCharacteristic
  * Configura o dispositivo BLE
  */
 void BluetoothManager::setup() {
-  Serial.begin(115200);
-
   BLEDevice::init("ViegasESP32_BLE");
 
   pServer = BLEDevice::createServer();

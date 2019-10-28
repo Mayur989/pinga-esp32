@@ -30,15 +30,21 @@ std::string WiFiManager::testConnectionCertificate = \
 "TBj0/VLZjmmx6BEP3ojY+x1J96relc8geMJgEtslQIxq/H5COEBkEveegeGTLg==\n" \
 "-----END CERTIFICATE-----\n";
 
-bool WiFiManager::begin(std::string ssid, std::string password) {
+void WiFiManager::init() {
+  FlashManager::setup();
+  WiFiCredentials credentials = FlashManager::getWiFiCredentials();
+  begin(credentials);
+}
+
+bool WiFiManager::begin(WiFiCredentials credentials) {
   int maxTries = 20;
   int tries = 0;
 
-  char ssidChars[ssid.size() + 1];
-  char passwordChars[ssid.size() + 1];
-  
-  strcpy(ssidChars, ssid.c_str());
-  strcpy(passwordChars, password.c_str());
+  char ssidChars[credentials.ssid.size() + 1];
+  char passwordChars[credentials.ssid.size() + 1];
+
+  strcpy(ssidChars, credentials.ssid.c_str());
+  strcpy(passwordChars, credentials.password.c_str());
 
   WiFi.begin(ssidChars, passwordChars);
   while (WiFi.status() != WL_CONNECTED && tries <= maxTries) {
@@ -48,8 +54,11 @@ bool WiFiManager::begin(std::string ssid, std::string password) {
 
   if (WiFi.status() == WL_CONNECTED) {
     connected = true;
-    ssidConnected = ssid;
+    ssidConnected = credentials.ssid;
     Serial.println("WiFi conectado com sucesso!");
+
+    IOTManager::setup();
+
     return true;
   } else {
     connected = false;
@@ -89,7 +98,7 @@ std::string WiFiManager::listNetworks() {
             Serial.print(rssi);
             Serial.print(")");
             Serial.println((WiFi.encryptionType(i) == WIFI_AUTH_OPEN)?" ":"*");
-            
+
             std::string str(ssid.c_str());
             networks += str;
             if (i < (networksCount - 1)) networks += delimiter;
@@ -111,9 +120,9 @@ bool WiFiManager::testConnection() {
   return false;
 
   // // if (!http.begin(*client, testConnectionURL.c_str())) return false;
-  
+
   // if (!http.begin(testConnectionURL.c_str())) return false;
-  
+
   // int httpCode = http.GET();
   // if (httpCode <= 0) return false;
   // Serial.println(httpCode);
