@@ -63,11 +63,11 @@ void IOTManager::connect(void) {
 }
 
 bool IOTManager::ready() {
-  return WiFiManager::connected && mqttClient && mqttClient->connected();
+  return WiFiManager::connected() && mqttClient && mqttClient->connected();
 }
 
 void IOTManager::getReady() {
-  if (!WiFiManager::connected) return;
+  if (!WiFiManager::connected()) return;
   if (!mqttClient) setup();
   if (mqttClient) connect();
 }

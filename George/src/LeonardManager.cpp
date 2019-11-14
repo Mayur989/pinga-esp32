@@ -8,7 +8,7 @@ const char* CommunicationKeys::TELEMETRY_DATA = "TD";
 
 
 // void LeonardManager::sendWiFiCredentials(WiFiCredentials credentials) {
-//   if (!Serial2.available() || !WiFiManager::connected) return;
+//   if (!Serial2.available() || !WiFiManager::connected()) return;
 
 //   String key = CommunicationKeys::WIFI_CREDENTIALS;
 
@@ -25,13 +25,13 @@ void LeonardManager::readCommand() {
   std::string value = (command.length() >= 3) ? command.substr(3, command.length()) : "";
 
   if (operation.compare(CommunicationKeys::WIFI_CREDENTIALS) == 0) {
-    if (WiFiManager::connected) return;
+    if (WiFiManager::connected()) return;
     WiFiCredentials credentials;
 
     credentials.ssid = value.substr(0, value.find(CommunicationKeys::SEPARATOR));
     credentials.password = value.substr(value.find(CommunicationKeys::SEPARATOR) + strlen(CommunicationKeys::SEPARATOR), value.length());
 
-    Serial.printf("Recebido as credenciais: %s , %s", credentials.ssid.c_str(), credentials.password.c_str());
+    Serial.printf("Recebido as credenciais: SSID=%s ... PASS=%s", credentials.ssid.c_str(), credentials.password.c_str());
 
     bool connection = WiFiManager::begin(credentials);
     if (connection) FlashManager::saveWiFiCredentials(credentials);

@@ -17,7 +17,8 @@
 #define RX_2 16
 #define TX_2 17
 
-int delayTime = 150;
+int maxLoops = 10;
+int currentLoop = 0;
 unsigned long lastMillisIOT = 0;
 unsigned long lastMillisBLE = 60000;
 
@@ -43,9 +44,25 @@ void setup() {
 }
 
 void loopIOT() {
+  if (!WiFiManager::connected()) {
+    currentLoop++;
+
+    // Reseta a placa se passou muito tempo sem conexao ao wifi.
+    if (currentLoop == maxLoops) {
+      WiFiCredentials credentials = FlashManager::getWiFiCredentials();
+      WiFiManager::begin(credentials);
+    } else if (currentLoop > maxLoops) {
+      ESP.restart();
+    }
+
+    return;
+  }
+
   GeorgeManager::sendWiFiCredentials();
   delay(150);
   GeorgeManager::sendCurrentData();
+
+  currentLoop = 0;
 }
 
 void loopBLE() {
@@ -64,7 +81,7 @@ void loop() {
   // Alterna a execução entre BLE e IOT
   unsigned long currentMillis = millis();
 
-  if (currentMillis - lastMillisIOT > 5000) {
+  if (currentMillis - lastMillisIOT > 7500) {
     Serial.println("IOT");
     lastMillisIOT = currentMillis;
     loopIOT();

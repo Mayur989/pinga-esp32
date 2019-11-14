@@ -13,13 +13,13 @@
 
 class WiFiManager {
   public:
-    static boolean connected;
     static std::string ssidConnected;
     static std::string passwordConnected;
     
     // Methods
     static void init();
     static bool begin(WiFiCredentials credentials);
+    static bool connected();
     static std::string getStatus();
     static std::string listNetworks();
 };

@@ -39,7 +39,7 @@ void setup() {
 }
 
 void loopIOT() {
-  if (!WiFiManager::connected) return;
+  if (!WiFiManager::connected()) return;
 
   // Reseta a placa se não conseguiu mandar pacotes 6 vezes seguidas.
   retries++;
@@ -49,7 +49,7 @@ void loopIOT() {
 
   if (IOTManager::mqttClient != NULL && IOTManager::mqttClient->lastError() != LWMQTT_SUCCESS) {
     Serial.println("O útlimo status foi erro.");
-    if (WiFiManager::connected) {
+    if (WiFiManager::connected()) {
       ESP.restart();
       return;
     }

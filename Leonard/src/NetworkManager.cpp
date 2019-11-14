@@ -8,12 +8,7 @@ double NetworkManager::getSpeed() {
 }
 
 void NetworkManager::updateSpeed() {
-  // lastSpeed = (-30.0 / WiFi.RSSI()) * 11.5;
-  // // lastSpeed = (WiFi.RSSI() / -100.0) * 10.5;
-  // if (lastSpeed < 0) lastSpeed *= -1;
-
-  // Serial.printf("RSSI: %d, SPEED: %lf\n", WiFi.RSSI(), lastSpeed);
-  if (!WiFiManager::connected) return;
+  if (!WiFiManager::connected()) return;
 
   unsigned long startTime = millis();
   unsigned long finishTime;
@@ -25,6 +20,11 @@ void NetworkManager::updateSpeed() {
   int httpCode = http.GET();
 
   Serial.printf("Status: %d\n", httpCode);
+  if (httpCode < 200 || httpCode >= 400) {
+    lastSpeed = 0;
+    http.end();
+    return;
+  }
   
   finishTime = millis();
   unsigned long totalTime = finishTime - startTime;
@@ -43,7 +43,7 @@ void NetworkManager::updateSpeed() {
 
 NetworkData NetworkManager::getCurrentData() {
   NetworkData data;
-  data.connected = WiFiManager::connected;
+  data.connected = WiFiManager::connected();
   data.ssid = WiFiManager::ssidConnected;
   data.speed = getSpeed();
 

@@ -16,7 +16,7 @@ void GeorgeManager::sendWiFiCredentials() {
 
 
 void GeorgeManager::sendWiFiCredentials(WiFiCredentials credentials) {
-  if (!Serial2.available() || !WiFiManager::connected) return;
+  if (!Serial2.available() || !WiFiManager::connected()) return;
 
   String key = CommunicationKeys::WIFI_CREDENTIALS;
   std::stringstream ss;
@@ -41,7 +41,6 @@ void GeorgeManager::sendCurrentData() {
 
   NetworkManager::updateSpeed();
   NetworkData data = NetworkManager::getCurrentData(); 
-
   sendTelemetry(data);
 
   digitalWrite(2, LOW);

@@ -1,6 +1,5 @@
 #include "WiFiManager.h"
 
-bool WiFiManager::connected = false;
 std::string WiFiManager::ssidConnected = "";
 
 void WiFiManager::init() {
@@ -9,10 +8,14 @@ void WiFiManager::init() {
   begin(credentials);
 }
 
+bool WiFiManager::connected() {
+  return WiFi.status() == WL_CONNECTED;
+}
+
 bool WiFiManager::begin(WiFiCredentials credentials) {
   if (WiFi.status() == WL_CONNECTED) WiFi.disconnect();
 
-  int maxTries = 20;
+  int maxTries = 100;
   int tries = 0;
 
   char ssidChars[credentials.ssid.size() + 1];
@@ -28,7 +31,6 @@ bool WiFiManager::begin(WiFiCredentials credentials) {
   }
 
   if (WiFi.status() == WL_CONNECTED) {
-    connected = true;
     ssidConnected = credentials.ssid;
     Serial.println("WiFi conectado com sucesso!");
 
@@ -36,7 +38,6 @@ bool WiFiManager::begin(WiFiCredentials credentials) {
 
     return true;
   } else {
-    connected = false;
     ssidConnected = "";
     Serial.println("WiFi não conectado!");
     return false;

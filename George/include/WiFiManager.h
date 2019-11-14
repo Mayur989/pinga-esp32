@@ -11,13 +11,12 @@
 
 class WiFiManager {
   public:
-    // Attributes
-    static boolean connected;
     static std::string ssidConnected;
     
     // Methods
     static void init();
     static bool begin(WiFiCredentials credentials);
+    static bool connected();
     static std::string getStatus();
 };
 

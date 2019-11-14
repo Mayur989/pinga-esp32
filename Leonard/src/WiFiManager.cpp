@@ -1,6 +1,5 @@
 #include "WiFiManager.h"
 
-bool WiFiManager::connected = false;
 std::string WiFiManager::ssidConnected = "";
 std::string WiFiManager::passwordConnected = "";
 
@@ -8,6 +7,10 @@ void WiFiManager::init() {
   FlashManager::setup();
   WiFiCredentials credentials = FlashManager::getWiFiCredentials();
   begin(credentials);
+}
+
+bool WiFiManager::connected() {
+  return (WiFi.status() == WL_CONNECTED);
 }
 
 bool WiFiManager::begin(WiFiCredentials credentials) {
@@ -26,18 +29,16 @@ bool WiFiManager::begin(WiFiCredentials credentials) {
     tries++;
   }
 
+  ssidConnected = credentials.ssid;
+  passwordConnected = credentials.password;
+
   if (WiFi.status() == WL_CONNECTED) {
-    connected = true;
-    ssidConnected = credentials.ssid;
-    passwordConnected = credentials.password;
     Serial.println("WiFi conectado com sucesso!");
 
     GeorgeManager::sendWiFiCredentials(credentials);
 
     return true;
   } else {
-    connected = false;
-    ssidConnected = "";
     Serial.println("WiFi não conectado!");
     return false;
   }
@@ -45,7 +46,7 @@ bool WiFiManager::begin(WiFiCredentials credentials) {
 
 std::string WiFiManager::getStatus() {
   std::stringstream ss;
-  ss << "WST=" << (connected ? "true" : "false") << "&WID=" << ssidConnected;
+  ss << "WST=" << (connected() ? "true" : "false") << "&WID=" << ssidConnected;
   return ss.str();
 }
 
