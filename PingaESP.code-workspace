@@ -1,8 +1,12 @@
 {
 	"folders": [
 		{
-			"name": "PingaESP",
-			"path": "PingaESP"
+			"name": "Leonard",
+			"path": "Leonard"
+		},
+		{
+			"name": "George",
+			"path": "George"
 		}
 	],
 	"settings": {

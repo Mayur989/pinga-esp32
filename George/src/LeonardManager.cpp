@@ -17,16 +17,21 @@ const char* CommunicationKeys::TELEMETRY_DATA = "TD";
 
 void LeonardManager::readCommand() {
   std::string command(Serial2.readStringUntil('\n').c_str());
+  Serial.printf("[MAIN] READ COMMAND: %s \n", command.c_str());
+
   if (command.length() <= 0) return;
 
   std::string operation = command.substr(0, 2);
-  std::string value = (command.length() >= 4) ? command.substr(4, command.length()) : "";
+  std::string value = (command.length() >= 3) ? command.substr(3, command.length()) : "";
 
   if (operation.compare(CommunicationKeys::WIFI_CREDENTIALS) == 0) {
+    if (WiFiManager::connected) return;
     WiFiCredentials credentials;
 
     credentials.ssid = value.substr(0, value.find(CommunicationKeys::SEPARATOR));
     credentials.password = value.substr(value.find(CommunicationKeys::SEPARATOR) + strlen(CommunicationKeys::SEPARATOR), value.length());
+
+    Serial.printf("Recebido as credenciais: %s , %s", credentials.ssid.c_str(), credentials.password.c_str());
 
     bool connection = WiFiManager::begin(credentials);
     if (connection) FlashManager::saveWiFiCredentials(credentials);

@@ -7,7 +7,8 @@
  * Hardware: Placa ESP32 - GEORGE.
  */
 
-#include <WiFiManager.h>
+#include "WiFiManager.h"
+#include "LeonardManager.h"
 
 #define LED 2
 
@@ -31,13 +32,15 @@ void setup() {
   Serial.begin(115200);
 
   // Inicializa o Serial com a outra placa
-  Serial2.begin(9600, SERIAL_8N1, RX_2, TX_2);
+  Serial2.begin(115200, SERIAL_8N1, RX_2, TX_2);
 
   // Tenta iniciar o Wi-Fi se tiver credenciais salvas
   WiFiManager::init();
 }
 
 void loopIOT() {
+  if (!WiFiManager::connected) return;
+
   // Reseta a placa se não conseguiu mandar pacotes 6 vezes seguidas.
   retries++;
   if (retries >= 6) {
@@ -68,14 +71,11 @@ void loopIOT() {
 
   retries = 0;
   IOTManager::mqttClient->loop();
-  delay(50);
+  delay(150);
 }
 
 void loopSerial() {
-  
-
-  Serial.println("[MAIN] LOOP E PUBLISH!");
-  // IOTManager::publishNetworkData();
+  LeonardManager::readCommand();
 }
 
 /**

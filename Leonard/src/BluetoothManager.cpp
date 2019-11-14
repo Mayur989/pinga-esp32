@@ -55,15 +55,15 @@ void PingaBLECharacteristicCallbacks::onWrite(BLECharacteristic *pCharacteristic
     credentials.password = password;
     bool connection = WiFiManager::begin(credentials);
 
-    if (connection) FlashManager::saveWiFiCredentials(credentials);
+    if (connection) {
+      FlashManager::saveWiFiCredentials(credentials);
+      GeorgeManager::sendWiFiCredentials(credentials);
+    }
 
     std::string returnValue = (connection) ? "WCR=true" : "WCR=false";
     BluetoothManager::notifyData(returnValue);
-
-    // Configura o Google IOT
-    if (connection) IOTManager::setup();
   } else if (operation.compare("WTC") == 0) {
-    std::string returnValue = (WiFiManager::testConnection()) ? "WTC=true" : "WTC=false";
+    std::string returnValue = (2 > 0) ? "WTC=true" : "WTC=false";
     BluetoothManager::notifyData(returnValue);
   } else if (operation.compare("WNL") == 0) {
     std::string networks = WiFiManager::listNetworks();

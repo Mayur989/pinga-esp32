@@ -82,6 +82,8 @@ String formatTelemetry(NetworkData data) {
 }
 
 void IOTManager::publishNetworkData(NetworkData data) {
+  if (!ready()) return;
+
   String telemetry = formatTelemetry(data);
   Serial.printf("Enviando: %s \n", telemetry.c_str());
   mqtt->publishTelemetry(telemetry);
