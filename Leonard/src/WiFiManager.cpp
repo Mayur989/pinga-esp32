@@ -37,6 +37,7 @@ bool WiFiManager::begin(WiFiCredentials credentials) {
 
     GeorgeManager::sendWiFiCredentials(credentials);
 
+    NetworkManager::http.setReuse(true);
     return true;
   } else {
     Serial.println("WiFi não conectado!");
@@ -56,7 +57,7 @@ std::string WiFiManager::listNetworks() {
   std::string delimiter = ";";
 
   Serial.println("WiFi scan feito");
-  if (networksCount == 0) {
+  if (networksCount <= 0) {
     Serial.println("Nenhuma rede disponível");
   } else {
     Serial.print(networksCount);

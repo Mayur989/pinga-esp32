@@ -21,13 +21,13 @@ WiFiCredentials FlashManager::getWiFiCredentials() {
   WiFiCredentials credentials;
 
   Serial.print("\nPegando SSID da flash: ");
-  Serial.println(prefs.getString("ssid", "Dovahkiin"));
+  Serial.println(prefs.getString("ssid", "Viegas"));
 
   Serial.print("\nPegando senha da flash: ");
-  Serial.println(prefs.getString("password", "batata123"));
+  Serial.println(prefs.getString("password", "steelers"));
 
-  credentials.ssid = std::string(prefs.getString("ssid", "Dovahkiin").c_str());
-  credentials.password = std::string(prefs.getString("password", "batata123").c_str());
+  credentials.ssid = std::string(prefs.getString("ssid", "Viegas").c_str());
+  credentials.password = std::string(prefs.getString("password", "steelers").c_str());
 
   return credentials;
 }

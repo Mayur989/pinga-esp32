@@ -7,14 +7,14 @@ double NetworkManager::getSpeed() {
   return lastSpeed;
 }
 
-void NetworkManager::updateSpeed() {
-  if (!WiFiManager::connected()) return;
-
+double NetworkManager::getNetworkSpeed() {
+  if (!WiFiManager::connected()) return 0.0;
   unsigned long startTime = millis();
   unsigned long finishTime;
   double speed = 0.0;
 
-  const size_t dataSize = 4 * 8; // Tamanho dos dados a chegar em MegaBits
+  // Tamanho dos dados a chegar em MegaBits
+  const size_t dataSize = 4 * 8;
 
   http.begin("http://107.170.96.207:7788/");
   int httpCode = http.GET();
@@ -23,7 +23,7 @@ void NetworkManager::updateSpeed() {
   if (httpCode < 200 || httpCode >= 400) {
     lastSpeed = 0;
     http.end();
-    return;
+    return 0.0;
   }
   
   finishTime = millis();
@@ -32,12 +32,31 @@ void NetworkManager::updateSpeed() {
   // Convertendo milisegundo pra segundo e pegando a velocidade em Mb/s;
   speed = (dataSize * 1000.0) / totalTime;
 
-  Serial.printf("Data Size: %d\n", dataSize);
   Serial.printf("Tempo total (ms): %lu\n", totalTime);
   Serial.printf("Velocidade: %lf Mb/s\n", speed);
 
-  lastSpeed = speed;
   http.end();
+  return speed;
+}
+
+void NetworkManager::updateSpeed() {
+  if (!WiFiManager::connected()) return;
+  
+  int requestsAmount = 5;
+  std::vector<double> times;
+
+  for (int i = 0; i < requestsAmount; i++) {
+    times.push_back(getNetworkSpeed());
+  }
+  
+  std::sort(times.begin(), times.end());
+  
+  for (int i = 0; i < times.size(); i++) {
+    Serial.printf("\t \t [%d]=%lf", i, times[i]);
+  }
+  
+  Serial.printf("Mediana: %lf \n", times[2]);
+  lastSpeed = times[2];
 };
 
 

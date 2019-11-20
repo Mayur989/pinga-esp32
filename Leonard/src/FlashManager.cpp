@@ -20,14 +20,13 @@ void FlashManager::saveWiFiCredentials(WiFiCredentials credentials) {
 WiFiCredentials FlashManager::getWiFiCredentials() {
   WiFiCredentials credentials;
 
-  Serial.print("\nPegando SSID da flash: ");
-  Serial.println(prefs.getString("ssid", "Dovahkiin"));
+  prefs.clear();
 
-  Serial.print("\nPegando senha da flash: ");
-  Serial.println(prefs.getString("password", "batata123"));
+  Serial.printf("\nPegando SSID da flash: %s\n", prefs.getString("ssid", "Viegas"));
+  Serial.printf("\nPegando senha da flash: %s\n", prefs.getString("password", "steelers"));
 
-  credentials.ssid = std::string(prefs.getString("ssid", "Dovahkiin").c_str());
-  credentials.password = std::string(prefs.getString("password", "batata123").c_str());
+  credentials.ssid = std::string(prefs.getString("ssid", "Viegas").c_str());
+  credentials.password = std::string(prefs.getString("password", "steelers").c_str());
 
   return credentials;
 }

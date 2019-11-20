@@ -14,6 +14,7 @@ class NetworkManager {
 
     static NetworkData getCurrentData();
     static double getSpeed();
+    static double getNetworkSpeed();
     static void updateSpeed();
 };
 

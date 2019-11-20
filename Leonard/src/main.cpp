@@ -81,13 +81,13 @@ void loop() {
   // Alterna a execução entre BLE e IOT
   unsigned long currentMillis = millis();
 
-  if (currentMillis - lastMillisIOT > 7500) {
-    Serial.println("IOT");
-    lastMillisIOT = currentMillis;
-    loopIOT();
-  } else if (currentMillis - lastMillisBLE > 5000) {
+if (currentMillis - lastMillisBLE > 5000) {
     Serial.println("BLE");
     lastMillisBLE = currentMillis;
     loopBLE();
+  } else if (currentMillis - lastMillisIOT > 7500) {
+    Serial.println("IOT");
+    lastMillisIOT = currentMillis;
+    loopIOT();
   }
 }
